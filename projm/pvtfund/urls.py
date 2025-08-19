@@ -7,5 +7,5 @@ urlpatterns = [
     path('funds/<int:pk>/', views.fund_detail, name='fund-detail'),  
     path('expenses/', views.pexpense, name='expense-list-create'),  
     path('expenses/<int:pk>/', views.expense_detail, name='expense-detail'),
-    path('api/expense-heads/', views.expense_heads)  
+    path('expense-heads/', views.expense_heads)  
 ]
