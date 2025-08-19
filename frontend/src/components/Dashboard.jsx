@@ -1,74 +1,109 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 function Dashboard() {
-  const [tfunds, setTfunds] = useState([])
+  const [dashboardData, setDashboardData] = useState({
+    funds: [],
+    expenses: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/api/funds/')
-      .then(res => res.json())
-      .then(data => {
-        setTfunds(data)
-      })
-      .catch(err => {
-        console.error('Error fetching funds:', err)
-      })
-  }, []) // ✅ Added dependency array to avoid infinite fetch loop
+    const fetchDashboardData = async () => {
+      setIsLoading(true);
+      setError(null);
 
-  const totalTfund = tfunds.reduce(
-    (sum, fund) => sum + parseFloat(fund.deposit_amount || 0),
+      try {
+        const [fundsResponse, expensesResponse] = await Promise.all([
+          fetch('/api/funds/'),
+          fetch('/api/expenses/'),
+        ]);
+
+        if (!fundsResponse.ok || !expensesResponse.ok) {
+          throw new Error('Failed to fetch data from the server.');
+        }
+
+        const fundsData = await fundsResponse.json();
+        const expensesData = await expensesResponse.json();
+
+        setDashboardData({
+          funds: fundsData,
+          expenses: expensesData,
+        });
+
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching dashboard data:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  const totalFunds = dashboardData.funds.reduce(
+    (sum, fund) => sum + (parseFloat(fund.deposit_amount) || 0),
     0
-  )
+  );
+
+  const totalExpenses = dashboardData.expenses.reduce(
+    (sum, expense) => sum + (parseFloat(expense.expense_amount) || 0),
+    0
+  );
+  
+  const currentBalance = totalFunds - totalExpenses;
+
+  const fundCount = dashboardData.funds.length;
+  const expenseCount = dashboardData.expenses.length;
+
+  // Prepare data for the chart
+  const chartData = [
+    { name: 'Total Funds', amount: totalFunds, color: '#4CAF50' },
+    { name: 'Total Expenses', amount: totalExpenses, color: '#F44336' },
+    { name: 'Current Balance', amount: currentBalance, color: '#2196F3' },
+  ];
+
+  if (isLoading) {
+    return <div className="text-center p-10 text-gray-500">Loading dashboard data...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center p-10 text-red-500">Error: {error}</div>;
+  }
 
   const cards = [
     {
       title: '💰 Total Funds',
-      content: `৳ ${totalTfund.toLocaleString()}`,
-      footer: 'Updated just now',
+      content: `৳ ${totalFunds.toLocaleString()}`,
+      footer: 'From all deposits',
     },
     {
       title: '📦 Total Spent',
-      content: '৳ 65,000',
-      footer: 'Last checked: 10 mins ago',
+      content: `৳ ${totalExpenses.toLocaleString()}`,
+      footer: 'From all expenses',
     },
     {
-      title: '📊 Monthly Summary',
-      content: '৳ 45,000 added this month',
-      footer: 'Includes all sources',
+      title: '💹 Current Balance',
+      content: `৳ ${currentBalance.toLocaleString()}`,
+      footer: 'Total Funds - Total Spent',
     },
     {
-      title: '🧾 Recent Transactions',
-      content: '12 new entries',
-      footer: 'Sorted by date',
+      title: '➕ Deposit Count',
+      content: `${fundCount} deposits`,
+      footer: 'Total deposit entries',
     },
     {
-      title: '🔍 Audit Status',
-      content: 'All records verified',
-      footer: 'Next audit: Sept 2025',
+      title: '➖ Expense Count',
+      content: `${expenseCount} expenses`,
+      footer: 'Total expense entries',
     },
-    {
-      title: '🚨 Audit Objections',
-      content: '2 pending clarifications',
-      footer: 'Review by Sept 10',
-    },
-    {
-      title: '📁 Archived Records',
-      content: '340 entries stored',
-      footer: 'Last backup: Aug 15',
-    },
-    {
-      title: '📈 Fund Growth',
-      content: 'Up 12% from last quarter',
-      footer: 'Based on verified data',
-    },
-    {
-      title: '🛠️ System Health',
-      content: 'All services operational',
-      footer: 'Checked 5 mins ago',
-    },
-  ]
+  ];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 w-full">
+      {/* Dynamic Cards */}
       {cards.map((card, index) => (
         <div
           key={index}
@@ -79,8 +114,24 @@ function Dashboard() {
           <div className="text-xs text-gray-400">{card.footer}</div>
         </div>
       ))}
+      
+      {/* Dynamic Chart Card */}
+      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 col-span-full">
+        <h2 className="text-lg font-semibold text-gray-800 mb-2">Financial Summary</h2>
+        <div style={{ width: '25%', height: 150 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="amount" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;

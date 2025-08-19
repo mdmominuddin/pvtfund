@@ -5,7 +5,7 @@ const AddExpense = ({ className }) => {
   const [heads, setHeads] = useState([]);
   const [newExpense, setNewExpense] = useState({
     expense_date: '',
-    expense_head: '', // ✅ This must be the ID
+    expense_head: '', 
     expense_amount: '',
   });
 
@@ -33,7 +33,7 @@ const AddExpense = ({ className }) => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...newExpense,
-          expense_head: parseInt(newExpense.expense_head), // ✅ Ensure it's an integer
+          expense_head: parseInt(newExpense.expense_head), 
         }),
       });
 
