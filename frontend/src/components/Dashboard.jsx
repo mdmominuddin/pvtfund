@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import AccountStatement from './AccountStatement';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 
 function Dashboard() {
   const [dashboardData, setDashboardData] = useState({
@@ -31,7 +40,6 @@ function Dashboard() {
           funds: fundsData,
           expenses: expensesData,
         });
-
       } catch (err) {
         setError(err.message);
         console.error('Error fetching dashboard data:', err);
@@ -52,13 +60,11 @@ function Dashboard() {
     (sum, expense) => sum + (parseFloat(expense.expense_amount) || 0),
     0
   );
-  
-  const currentBalance = totalFunds - totalExpenses;
 
+  const currentBalance = totalFunds - totalExpenses;
   const fundCount = dashboardData.funds.length;
   const expenseCount = dashboardData.expenses.length;
 
-  // Prepare data for the chart
   const chartData = [
     { name: 'Total Funds', amount: totalFunds, color: '#4CAF50' },
     { name: 'Total Expenses', amount: totalExpenses, color: '#F44336' },
@@ -102,23 +108,25 @@ function Dashboard() {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 w-full">
-      {/* Dynamic Cards */}
-      {cards.map((card, index) => (
-        <div
-          key={index}
-          className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-300"
-        >
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">{card.title}</h2>
-          <p className="text-gray-600 text-sm mb-4">{card.content}</p>
-          <div className="text-xs text-gray-400">{card.footer}</div>
-        </div>
-      ))}
-      
-      {/* Dynamic Chart Card */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 col-span-full">
-        <h2 className="text-lg font-semibold text-gray-800 mb-2">Financial Summary</h2>
-        <div style={{ width: '25%', height: 150 }}>
+    <div className="space-y-6 w-full">
+      {/* Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        {cards.map((card, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-300"
+          >
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">{card.title}</h2>
+            <p className="text-gray-600 text-sm mb-4">{card.content}</p>
+            <div className="text-xs text-gray-400">{card.footer}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Chart */}
+      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-800 mb-2">📊 Financial Summary</h2>
+        <div style={{ width: '100%', height: 250 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData}>
               <XAxis dataKey="name" />
@@ -130,6 +138,13 @@ function Dashboard() {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Account Statement */}
+      <AccountStatement
+        funds={dashboardData.funds}
+        expenses={dashboardData.expenses}
+        initialBalance={0}
+      />
     </div>
   );
 }
