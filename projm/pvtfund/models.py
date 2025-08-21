@@ -1,4 +1,14 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+class CustomUser(AbstractUser):
+    ROLE_CHOICES = [
+        ('adming', 'Admin'),
+        ('manager', 'Manager'),
+        ('viewer', 'Viewer'),
+    ]
+
+    role = models.CharField(max_length=100, choices=ROLE_CHOICES)
 
 class ExpenseHead(models.Model):
     head_name = models.CharField(max_length=100)
