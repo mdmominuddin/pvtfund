@@ -1,6 +1,5 @@
-// components/Login.jsx
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 
 function Login() {
@@ -11,7 +10,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault()
     try {
-      const res = await axios.post('http://localhost:8000/api/users/login/', {
+      const res = await axios.post('/api/login/', {
         username,
         password
       })
@@ -24,10 +23,30 @@ function Login() {
   }
 
   return (
-    <form onSubmit={handleLogin} className="space-y-4">
-      <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} className="border p-2 w-full" />
-      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} className="border p-2 w-full" />
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2">Login</button>
+    <form onSubmit={handleLogin} className="space-y-4 max-w-sm mx-auto p-4 border rounded">
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={e => setUsername(e.target.value)}
+        className="border p-2 w-full rounded"
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={e => setPassword(e.target.value)}
+        className="border p-2 w-full rounded"
+      />
+      <button
+        type="submit"
+        className="bg-blue-600 text-white px-4 py-2 w-full rounded hover:bg-blue-700"
+      >
+        Login
+      </button>
+      <p className="text-center">
+        Not registered? <Link to="/register" className="text-blue-600 hover:underline">Register here</Link>
+      </p>
     </form>
   )
 }

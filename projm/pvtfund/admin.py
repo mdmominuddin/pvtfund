@@ -2,11 +2,9 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import ExpenseHead, Fund, Expense
+from .models import ExpenseHead, Fund, Expense, CustomUser
 
-# Register your models here.
-# By creating a ModelAdmin class, we can customize how the model is
-# displayed and interacted with in the Django admin site.
+admin.site.register(CustomUser)
 
 @admin.register(ExpenseHead)
 class ExpenseHeadAdmin(admin.ModelAdmin):
