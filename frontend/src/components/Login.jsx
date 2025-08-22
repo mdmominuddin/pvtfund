@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 
-function Login() {
+function Login({ onBack, onSwitchToRegister }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
@@ -45,8 +45,24 @@ function Login() {
         Login
       </button>
       <p className="text-center">
-        Not registered? <Link to="/register" className="text-blue-600 hover:underline">Register here</Link>
+        Not registered?{' '}
+        <button
+          type="button"
+          onClick={onSwitchToRegister}
+          className="text-blue-600 hover:underline"
+        >
+          Register here
+        </button>
       </p>
+      {onBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          className="mt-2 text-gray-500 hover:underline text-sm"
+        >
+          ← Back
+        </button>
+      )}
     </form>
   )
 }
