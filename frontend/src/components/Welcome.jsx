@@ -3,6 +3,19 @@ import { motion, AnimatePresence } from "framer-motion"
 import Login from "./Login"
 import Register from "./Register"
 
+
+const formVariants = {
+  initial: { opacity: 0, x: 50 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -50 },
+};
+
+const welcomeInfoVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
+};
+
 function Welcome() {
   const [showForm, setShowForm] = useState(null) // null | 'login' | 'register'
 
@@ -49,7 +62,7 @@ function Welcome() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4 }}
+                transition={{ duration: 0.3 }}
                 className="text-center max-w-md"
               >
                 <h2 className="text-2xl font-bold text-gray-800 mb-4">
@@ -60,6 +73,7 @@ function Welcome() {
                   <li>✅ Automated fund summaries</li>
                   <li>✅ Track income & expenses</li>
                   <li>✅ Interactive dashboards</li>
+                  <li>✅ Accuracy and Responsibilities</li>
                 </ul>
               </motion.div>
             )}

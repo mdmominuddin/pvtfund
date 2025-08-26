@@ -29,8 +29,7 @@ function NavigationBar() {
       <Link to="/addexpenses" className="text-blue-600 hover:underline">Add Expenses</Link>
       <Link to="/dashboard" className="text-blue-600 hover:underline">Dashboard</Link>
       <Link to="/fundstate" className="text-blue-600 hover:underline">Fund State</Link>
-      <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
-      <Link to="/register" className="text-blue-600 hover:underline">Register</Link>
+      
     </nav>
   )
 }
@@ -47,8 +46,7 @@ function App() {
               <Route path="/addfund" element={<Addfund />} />
               <Route path="/addexpenses" element={<AddExpense />} />
               <Route path="/fundstate" element={<Fundstate />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              
               <Route
                 path="/dashboard"
                 element={

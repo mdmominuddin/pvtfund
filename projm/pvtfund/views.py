@@ -133,3 +133,24 @@ class RegisterView(APIView):
             serializer.save()
             return Response({"message": "User registered successfully."}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+from django.contrib.auth import get_user_model
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
+User = get_user_model()
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def validate_user(request):
+    username = request.data.get("username")
+    email = request.data.get("email")
+
+    if username and User.objects.filter(username=username).exists():
+        return Response({"error": "Username already taken"}, status=400)
+    if email and User.objects.filter(email=email).exists():
+        return Response({"error": "Email already used"}, status=400)
+
+    return Response({"message": "Valid"}, status=200)
