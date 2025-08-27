@@ -1,12 +1,14 @@
 from rest_framework import serializers
 from .models import Fund, Expense, ExpenseHead
+from rest_framework import serializers
+from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 
 
 class FundSerializer(serializers.ModelSerializer):
     class Meta:
         model = Fund
-        fields = "__all__"
-
+        fields = ['id', 'deposit_date', 'fund_description', 'deposited_by', 'deposit_amount']
 
 
 class ExpenseSerializer(serializers.ModelSerializer):
@@ -21,13 +23,7 @@ class ExpenseHeadSerializer(serializers.ModelSerializer):
         model = ExpenseHead
         fields = ['id', 'head_name']
 
-
-from rest_framework import serializers
-from django.contrib.auth import get_user_model
-from django.contrib.auth.password_validation import validate_password
-
 User = get_user_model()
-
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True)

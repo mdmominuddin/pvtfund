@@ -123,22 +123,7 @@ function Dashboard() {
         ))}
       </div>
 
-      {/* Chart */}
-      <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-800 mb-2">📊 Financial Summary</h2>
-        <div style={{ width: '100%', height: 250 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="amount" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
+      
       {/* Account Statement */}
       <AccountStatement
         funds={dashboardData.funds}

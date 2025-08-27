@@ -7,6 +7,9 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.shortcuts import get_object_or_404
 from .models import Fund, Expense
 from .serializers import FundSerializer, ExpenseSerializer
+from django.utils.dateparse import parse_date
+from django.utils import timezone
+from django.db.models import Sum
 
 
 @api_view(['GET', 'POST'])
@@ -154,3 +157,55 @@ def validate_user(request):
         return Response({"error": "Email already used"}, status=400)
 
     return Response({"message": "Valid"}, status=200)
+
+
+# for custom account statement
+
+class FundStatementView(APIView):
+    def get(self, request):
+        # Parse date range from query params
+        start_date = parse_date(request.query_params.get('start_date'))  # e.g., "2025-08-10"
+        end_date = parse_date(request.query_params.get('end_date'))      # e.g., "2025-09-04"
+        today = timezone.now().date()
+
+        # Opening balance (before start_date)
+        fund_before = Fund.objects.filter(deposit_date__lt=start_date).aggregate(Sum('deposit_amount'))['deposit_amount__sum'] or 0
+        expense_before = Expense.objects.filter(expense_date__lt=start_date).aggregate(Sum('expense_amount'))['expense_amount__sum'] or 0
+        opening_balance = fund_before - expense_before
+
+        # Closing balance (up to end_date)
+        fund_until_end = Fund.objects.filter(deposit_date__lte=end_date).aggregate(Sum('deposit_amount'))['deposit_amount__sum'] or 0
+        expense_until_end = Expense.objects.filter(expense_date__lte=end_date).aggregate(Sum('expense_amount'))['expense_amount__sum'] or 0
+        closing_balance = fund_until_end - expense_until_end
+
+        # Present balance (up to today)
+        fund_today = Fund.objects.filter(deposit_date__lte=today).aggregate(Sum('deposit_amount'))['deposit_amount__sum'] or 0
+        expense_today = Expense.objects.filter(expense_date__lte=today).aggregate(Sum('expense_amount'))['expense_amount__sum'] or 0
+        present_balance = fund_today - expense_today
+
+        # Transactions in range
+        funds = Fund.objects.filter(deposit_date__gte=start_date, deposit_date__lte=end_date)
+        expenses = Expense.objects.filter(expense_date__gte=start_date, expense_date__lte=end_date)
+
+        # Serialize and tag each transaction
+        fund_data = FundSerializer(funds, many=True).data
+        for f in fund_data:
+            f['type'] = 'income'
+            f['date'] = f.pop('deposit_date')
+            f['amount'] = f.pop('deposit_amount') 
+
+        expense_data = ExpenseSerializer(expenses, many=True).data
+        for e in expense_data:
+            e['type'] = 'expense'
+            e['date'] = e.pop('expense_date')
+            e['amount'] = e.pop('expense_amount')  
+
+        # Merge and sort transactions
+        transactions = sorted(fund_data + expense_data, key=lambda x: x['date'])
+
+        return Response({
+            "opening_balance": opening_balance,
+            "closing_balance": closing_balance,
+            "present_balance": present_balance,
+            "transactions": transactions
+        })

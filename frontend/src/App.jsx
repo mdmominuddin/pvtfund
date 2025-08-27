@@ -6,6 +6,7 @@ import Addfund from './components/Addfund'
 import Dashboard from './components/Dashboard'
 import Fundstate from './components/Fundstate'
 import AddExpense from './components/Addexpense'
+import FundStatement from './components/FundStatement'
 
 // Auth Components
 import Login from './components/Login'
@@ -29,6 +30,7 @@ function NavigationBar() {
       <Link to="/addexpenses" className="text-blue-600 hover:underline">Add Expenses</Link>
       <Link to="/dashboard" className="text-blue-600 hover:underline">Dashboard</Link>
       <Link to="/fundstate" className="text-blue-600 hover:underline">Fund State</Link>
+      <Link to="/fundstatement" className="text-blue-600 hover:underline">Statement</Link>
       
     </nav>
   )
@@ -46,6 +48,7 @@ function App() {
               <Route path="/addfund" element={<Addfund />} />
               <Route path="/addexpenses" element={<AddExpense />} />
               <Route path="/fundstate" element={<Fundstate />} />
+              <Route path="/fundstatement" element={<FundStatement />} />
               
               <Route
                 path="/dashboard"
