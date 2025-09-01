@@ -1,19 +1,19 @@
 function DateRangeSelector({ onChange }) {
   return (
-    <div className="flex gap-4 mb-6 items-center justify-center">
+    <div className="flex flex-wrap gap-6 items-center justify-center bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
       <div>
-        <label className="text-sm">Start Date</label>
+        <label className="block text-sm text-gray-600 mb-1">📅 Start Date</label>
         <input
           type="date"
-          className="border rounded px-2 py-1"
+          className="border border-gray-300 rounded px-3 py-2 text-sm shadow-sm"
           onChange={e => onChange('start', e.target.value)}
         />
       </div>
       <div>
-        <label className="text-sm">End Date</label>
+        <label className="block text-sm text-gray-600 mb-1">📅 End Date</label>
         <input
           type="date"
-          className="border rounded px-2 py-1"
+          className="border border-gray-300 rounded px-3 py-2 text-sm shadow-sm"
           onChange={e => onChange('end', e.target.value)}
         />
       </div>

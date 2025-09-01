@@ -2,20 +2,23 @@ import TransactionRow from './TransactionRow';
 
 function TransactionList({ transactions }) {
   return (
-    <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200 bg-white">
-      <table className="min-w-full table-auto border-collapse text-sm">
-        <thead className="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-600 uppercase tracking-wide">
+    <div className="overflow-x-auto border border-gray-300 rounded-lg shadow-sm">
+      <table className="min-w-full bg-white">
+        <thead className="bg-gray-100 text-gray-700 uppercase text-xs tracking-wide">
           <tr>
-            <th className="px-6 py-3 text-left">Date</th>
-            <th className="px-6 py-3 text-left">Type</th>
-            <th className="px-6 py-3 text-right">Amount</th>
-            <th className="px-6 py-3 text-left">Remarks</th>
+            <th className="px-4 py-2 border text-left">Date</th>
+            <th className="px-4 py-2 border text-left">Type</th>
+            <th className="px-4 py-2 border text-right">Amount</th>
+            <th className="px-4 py-2 border text-left">Remarks</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
+        <tbody>
           {transactions.length > 0 ? (
-            transactions.map(tx => (
-              <TransactionRow key={`${tx.type}-${tx.id}`} tx={tx} />
+            transactions.map((tx, index) => (
+              <TransactionRow
+                key={`${tx.type}-${tx.id}`}
+                tx={tx}
+              />
             ))
           ) : (
             <tr>
